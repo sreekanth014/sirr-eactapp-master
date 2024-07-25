@@ -13,6 +13,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "lint":"",
     "build": "",
     "test": "",
     "eject": ""
