@@ -13,10 +13,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "lint":"",
-    "build": "",
-    "test": "",
-    "eject": ""
+    "lint":"react-scripts lint",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
