@@ -31,13 +31,13 @@ jobs:
       - name: Build project
         run: npm run build
       - name: Archive source folder as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions//home/react/actions-runner/_work/reactapp-master/reactapp-master/build@v3
         with:
           name: source-folder-artifact
           path: /home/react/actions-runner/_work/reactapp-master/reactapp-master/build
 
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions//home/react/actions-runner/_work/reactapp-master/reactapp-master/build@v3
         with:
           name: /home/react/actions-runner/_work/reactapp-master/reactapp-master/build
 
