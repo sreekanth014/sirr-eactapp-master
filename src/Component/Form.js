@@ -16,7 +16,7 @@ export default class Form extends Component {
     }
     handleSubmit=(event)=>{
         // alert(`${this.state.inputData}`)
-        if(this.state.inputData!=''){
+        if(this.state.inputData!==''){
             let newItem = [...this.state.todoItems,this.state.inputData]
             this.setState({
                 todoItems:newItem,
@@ -29,7 +29,7 @@ export default class Form extends Component {
     deleteItem=(index)=>{
         const todoItems=[...this.state.todoItems];
         let left=todoItems.filter((value,key)=>{
-            return index!=key
+            return index!==key
         })
         this.setState({
             todoItems:left
