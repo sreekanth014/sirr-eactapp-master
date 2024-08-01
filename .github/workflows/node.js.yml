@@ -30,20 +30,5 @@ jobs:
       
       - name: Build project
         run: npm run build
-      - name: Archive source folder as artifact
-        uses: actions//home/react/actions-runner/_work/reactapp-master/reactapp-master/build@v3
-        with:
-          name: source-folder-artifact
-          path: /home/react/actions-runner/_work/reactapp-master/reactapp-master/build
-
-      - name: Download artifact
-        uses: actions//home/react/actions-runner/_work/reactapp-master/reactapp-master/build@v3
-        with:
-          name: /home/react/actions-runner/_work/reactapp-master/reactapp-master/build
-
-      - name: Copy folder data
-        run: |
-          rm -rf /var/www/build
-          cp -r /home/react/actions-runner/_work/reactapp-master/reactapp-master/build /var/www/
-
+      
       
