@@ -12,7 +12,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+
 
     steps:
       - name: Checkout repository
@@ -29,7 +30,5 @@ jobs:
       
       - name: Build project
         run: npm run build
-      - name: serve 
-        run: npm install -g serve
-      - name: build
-        run: serve -s build
+
+      
