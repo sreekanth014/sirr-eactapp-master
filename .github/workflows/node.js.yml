@@ -31,4 +31,8 @@ jobs:
 
       - name: Build project
         run: npm run build
+      - name: Copy folder data
+        run: |
+          
+          sudo cp -r /home/react/actions-runner/_work/reactapp-master/reactapp-master/build /var/www/
 
