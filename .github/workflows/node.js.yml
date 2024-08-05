@@ -1,39 +1,27 @@
+name: Deploy to Kubernetes
+
 on:
   push:
-    branches:
-
-      - master
-     
-      
-      - development
-      
-  pull_request:
-    branches:
-      
-      - development
-      
+    branches: [master]
 
 jobs:
-  build:
-    runs-on: self-hosted
-
-
+  build-and-deploy:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - name: Build Image
+        run: docker build -t my-react-app:latest .
+      - name: Login to Docker Registry
+        uses: docker/login-action@v2
         with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      
-      - name: Build project
-        run: npm run build
-      - name: Copy folder data
-        run: |
-          sudo cp -r /home/react/actions-runner/_work/reactapp-master/reactapp-master/build /var/www/
-     
+          registry: your-docker-registry
+          username: your-username
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push Image
+        run: docker push your-docker-registry/my-react-app:latest
+      - name: Deploy to Kubernetes
+        uses: actions/setup-kubectl@v2
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+      - name: Deploy
+        run: kubectl apply -f deployment.yaml
