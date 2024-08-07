@@ -1,4 +1,4 @@
-name: Build, Push, and Deploy to Kubernetes
+name: Build, Push, and Deploy to Kubernetess
 
 on:
   push:
