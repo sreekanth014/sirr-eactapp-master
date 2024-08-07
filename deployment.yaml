@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: react-app
-          image: imrishav/gitops01:604ac3b39a717bbceb7e0386debaed67fd7857bb
+          image: pathidocker/my-react-app:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
