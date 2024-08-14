@@ -1,26 +1,45 @@
-name: Build Docker Images
+name: react-iam project
 on:
   push:
     branches:
       - master
+     
+   
 jobs:
-    build:
-      name: push docker image to docker hub
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - name: login to docker hub
-          id: docker-hub
-          env:
-            username: ${{secrets.DOCKERHUB_USERNAME}}
-            password: ${{secrets.DOCKERHUB_PASSWORD}}
-          run: |
-            docker login -u $username -p $password 
-        - name: build the docker image
-          id: build-docker-image
-          run: |
-            ls -la 
-            docker build -t pathidocker/my-react-app:latest .
-        - name: push the docker image
-          id: push-docker-image
-          run: docker push ${{secrets.DOCKERHUB_USERNAME}}/my-react-app:latest
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+     
+      - name: Build project
+        run: npm run build
+
+      - name: Build project
+        run: npm run build
+
+      - name: build the docker image
+        run: |
+          docker rmi -f react-iam:latest | true
+          docker build -t react-iam:latest .
+
+      - name: build the docker image container
+        run: |
+          docker rm -f my-container | true
+          docker run -d -p 3000:3000 --name my-container react-iam:latest
+
+      - name: Deploy to DigitalOcean
+        uses: digitalocean/app_action/@main
+        with:
+          app_name: my_react_app
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
