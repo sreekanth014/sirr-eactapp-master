@@ -30,13 +30,13 @@ jobs:
 
       - name: build the docker image
         run: |
-          docker rmi -f react-iam:latest | true
-          docker build -t react-iam:latest .
+          docker rmi -f react-iam:latestt | true
+          docker build -t react-iam:latestt .
 
       - name: build the docker image container
         run: |
           docker rm -f my-container | true
-          docker run -d -p 3000:3000 --name my-container react-iam:latest
+          docker run -d -p 3000:3000 --name my-container react-iam:latestt
 
       - name: Deploy to DigitalOcean
         uses: digitalocean/app_action/@main
