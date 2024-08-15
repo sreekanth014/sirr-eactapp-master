@@ -1,10 +1,11 @@
-name: react-iam projectt
+name: react-iam project
+
 on:
   push:
     branches:
+      - development
       - master
-     
-   
+
 jobs:
   build:
     runs-on: self-hosted
@@ -21,28 +22,31 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-     
       - name: Build project
         run: npm run build
 
-      - name: Build project
-        run: npm run build
-
-      - name: build the docker image
+      - name: Build Docker image
         run: |
-          docker rmi -f react-iam:latestt | true
-          docker build -t react-iam:latestt .
+          docker rmi -f react-iam:latest | true
+          docker build -t react-iam:latest .
 
-      - name: build the docker image container
+      - name: Run Docker container
         run: |
           docker rm -f my-container | true
-          docker run -d -p 3000:3000 --name my-container react-iam:latestt
+          docker run -d -p 3000:3000 --name my-container react-iam:latest
 
       - name: Deploy to DigitalOcean
-        uses: digitalocean/app_action/@main
+        uses: digitalocean/app_action@main
         with:
           app_name: react
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      - name: Copy folder data
+
+      - name: Deploy to appropriate domain
         run: |
-          sudo cp -r /home/enfec/actions-runner/_work/sirr-eactapp-master/sirr-eactapp-master/build /var/www/
+          if [ "${{ github.ref_name }}" == "development" ]; then
+            sudo cp -r /home/enfec/actions-runner/_work/sirr-eactapp-master/sirr-eactapp-master/build /var/www/development
+            sudo cp -r /home/enfec/actions-runner/_work/sirr-eactapp-master/sirr-eactapp-master/build /var/www/sree.dharmateja.xyz
+          elif [ "${{ github.ref_name }}" == "master" ]; then
+            sudo cp -r /home/enfec/actions-runner/_work/sirr-eactapp-master/sirr-eactapp-master/build /var/www/master
+            sudo cp -r /home/enfec/actions-runner/_work/sirr-eactapp-master/sirr-eactapp-master/build /var/www/pathi.dharmateja.xyz
+          fi
