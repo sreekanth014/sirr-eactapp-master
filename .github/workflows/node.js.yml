@@ -31,9 +31,4 @@ jobs:
         uses: digitalocean/app_action/@main
         with:
           app_name: react
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          
-      - name: Copy folder data
-        run: |
-          sudo cp -r /home/enfec/actions-runner/_work/sirr-eactapp-master/sirr-eactapp-master/build /var/www/
-      
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}    
