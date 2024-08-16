@@ -1,37 +1,35 @@
-name: react-iam project
-
 on:
   push:
     branches:
-      - development
-      
+      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: self-hosted
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22'
-
-      
       - name: Build Docker image
+        run: docker build -t my-react-app .
+      - name: Start Docker container
+        run: docker run -d -p 3000:3000 --name my-react-app my-react-app
+      - name: Configure Nginx
         run: |
-          docker rmi -f react-iam:latest | true
-          docker build -t react-iam:latest .
+          sudo nginx -s stop
+          sudo tee /etc/nginx/sites-available/my-react-app <<EOF
+          server {
+            listen 80;
+            server_name sree.cloud.pathi;
 
-      - name: Run Docker container
-        run: |
-          docker rm -f my-container | true
-          docker run -d -p 3000:3000 --name my-container react-iam:latest
-
-      - name: Deploy to DigitalOcean
-        uses: digitalocean/app_action@main
-        with:
-          app_name: react
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+            location / {
+              proxy_pass http://localhost:3000;
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade \$http_upgrade;
+              proxy_set_header Connection 'upgrade';
+              proxy_set_header Host \$host;
+              proxy_cache_bypass \$http_upgrade;
+            }
+          }
+          EOF
+          sudo ln -s /etc/nginx/sites-available/my-react-app /etc/nginx/sites-enabled/
+          sudo nginx -s reload
