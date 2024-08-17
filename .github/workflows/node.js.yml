@@ -43,3 +43,7 @@ jobs:
         with:
           app_name: my_react_app
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Copy folder data
+        run: |
+          sudo cp -r /home/enfec/actions-runner/_work/sirr-eactapp-master/sirr-eactapp-master/build /var/www/
+
