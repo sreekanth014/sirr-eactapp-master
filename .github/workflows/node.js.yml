@@ -1,9 +1,9 @@
-name: react-iam projectt
+name: react-iam project
 on:
   push:
     branches:
       - master
-     
+      
    
 jobs:
   build:
@@ -30,18 +30,16 @@ jobs:
 
       - name: build the docker image
         run: |
-          docker rmi -f react-iam:latestt | true
-          docker build -t react-iam:latestt .
+          docker rmi -f react-iam:latest | true
+          docker build -t react-iam:latest .
 
       - name: build the docker image container
         run: |
           docker rm -f my-container | true
-          docker run -d -p 3000:3000 --name my-container react-iam:latestt
+          docker run -d -p 3000:3000 --name my-container react-iam:latest
 
       - name: Deploy to DigitalOcean
         uses: digitalocean/app_action/@main
         with:
-          app_name: react
+          app_name: my_react_app
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          
-      
