@@ -1,11 +1,10 @@
-name: react-iam project
-
+name: react-iam projectt
 on:
   push:
     branches:
       - development
       
-
+   
 jobs:
   build:
     runs-on: self-hosted
@@ -19,19 +18,31 @@ jobs:
         with:
           node-version: '22'
 
-      
-      - name: Build Docker image
-        run: |
-          docker rmi -f react-iam:latest | true
-          docker build -t react-iam:latest .
+      - name: Install dependencies
+        run: npm install
 
-      - name: Run Docker container
+     
+      - name: Build project
+        run: npm run build
+
+      - name: Build project
+        run: npm run build
+
+      - name: build the docker image
         run: |
-          docker rm -f my-container | true
-          docker run -d -p 3000:3000 --name my-container react-iam:latest
+          docker rmi -f react-iam11:latest | true
+          docker build -t react-iam1:latest .
+
+      - name: build the docker image container
+        run: |
+          docker rm -f my-container1 | true
+          docker run -d -p 3001:3000 --name my-container1 react-iam1:latest
 
       - name: Deploy to DigitalOcean
-        uses: digitalocean/app_action@main
+        uses: digitalocean/app_action/@main
         with:
-          app_name: react
+          app_name: my_react_app
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Copy folder data
+        run: |
+          sudo cp -r /home/enfec/actions-runner/_work/sirr-eactapp-master/sirr-eactapp-master/build /var/www/
