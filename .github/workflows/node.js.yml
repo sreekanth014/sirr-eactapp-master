@@ -36,7 +36,4 @@ jobs:
         uses: digitalocean/app_action/@main
         with:
           app_name: my_react_app
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Clean up Docker images
-        run: docker rmi -f registry.digitalocean.com/react-iam/react-iam:latest
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}     
