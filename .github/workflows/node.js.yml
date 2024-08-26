@@ -1,36 +1,42 @@
-name: react-iam
+name: react-iam project
 on:
   push:
     branches:
       - production
 
 jobs:
-  deploy:
+  build:
     runs-on: self-hosted
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Build Docker image
-        run: docker build -t my-react-app .
-      - name: Start Docker container
-        run: docker run -d -p 3000:3000 --name my-react-app my-react-app
-      - name: Configure Nginx
-        run: |
-          sudo nginx -s stop
-          sudo tee /etc/nginx/sites-available/my-react-app <<EOF
-          server {
-            listen 80;
-            server_name sree.cloud.pathi;
 
-            location / {
-              proxy_pass http://localhost:3000;
-              proxy_http_version 1.1;
-              proxy_set_header Upgrade \$http_upgrade;
-              proxy_set_header Connection 'upgrade';
-              proxy_set_header Host \$host;
-              proxy_cache_bypass \$http_upgrade;
-            }
-          }
-          EOF
-          sudo ln -s /etc/nginx/sites-available/my-react-app /etc/nginx/sites-enabled/
-          sudo nginx -s reload
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Log in to DigitalOcean Container Registry
+        run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login -u doctl --password-stdin registry.digitalocean.com
+
+      - name: Build Docker image
+        run: docker build -t registry.digitalocean.com/react-iam/react-iam:latest .
+
+      - name: Push Docker image to DigitalOcean Container Registry
+        run: docker push registry.digitalocean.com/react-iam/react-iam:latest
+
+      - name: Deploy to DigitalOcean
+        uses: digitalocean/app_action/@main
+        with:
+          app_name: my_react_app
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Clean up Docker images
+        run: docker rmi -f registry.digitalocean.com/react-iam/react-iam:latest
