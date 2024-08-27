@@ -1,10 +1,10 @@
-name: react-iam project
-
+name: react-iam projectt
 on:
   push:
     branches:
-      - development
-
+      - testing
+      
+   
 jobs:
   build:
     runs-on: self-hosted
@@ -18,21 +18,27 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Install dependencies
+        run: npm install
 
-      - name: Build Docker image
-        run: |
-          docker rmi -f react-iam:latest || true
-          docker buildx build --platform linux/amd64 -t react-iam:latest .
+     
+      - name: Build project
+        run: npm run build
 
-      - name: Run Docker container
+      
+
+      - name: build the docker image
         run: |
-          docker rm -f my-container || true
-          docker run -d -p 3000:3000 --name my-container react-iam:latest
+          docker rmi -f react-iam2:latest | true
+          docker build -t react-iam2:latest .
+
+      - name: build the docker image container
+        run: |
+          docker rm -f my-container2 | true
+          docker run -d -p 3002:3000 --name my-container2 react-iam2:latest
 
       - name: Deploy to DigitalOcean
-        uses: digitalocean/app_action@main
+        uses: digitalocean/app_action/@main
         with:
-          app_name: react
+          app_name: my_react_app
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
