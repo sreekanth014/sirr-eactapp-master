@@ -25,6 +25,13 @@ jobs:
 
       - name: Log in to DigitalOcean Container Registry
         run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login -u doctl --password-stdin registry.digitalocean.com
+        
+      - name: Build and Push Docker Image with Multiple Tags
+        run: |
+          # Define list of desired tag versions
+          tag_versions=( "latest" "v1.0.0" "v1.0.1" )  # Customize with your versions
+
+          for tag in "${tag_versions[@]}"; do        
 
       - name: Build Docker image
         run: docker build -t registry.digitalocean.com/react-iam/react-iam:latest .
