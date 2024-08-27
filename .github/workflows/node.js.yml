@@ -39,14 +39,13 @@ jobs:
       - name: Build and Push Docker Image with Multiple Tags
         run: |
           # Define list of desired tag versions
-          tag_versions=( "latest" "v1.0.0" "v1.0.1" )  # Customize with your versions
+          tag_versions=( "latest" "$current_tag" "v1.0.0" "v1.0.1" )  # Add or customize your versions
 
-          for tag in "${tag_versions[@]}"; do        
-
-            docker build -t registry.digitalocean.com/react-iam/react-iam:latest .
-
-            docker push registry.digitalocean.com/react-iam/react-iam:latest
-          done  
+          for tag in "${tag_versions[@]}"; do
+            echo "Building and pushing image with tag: $tag"
+            docker build -t registry.digitalocean.com/react-iam/react-iam:$tag .
+            docker push registry.digitalocean.com/react-iam/react-iam:$tag
+          done 
       - name: Deploy to DigitalOcean
         uses: digitalocean/app_action/@main
         with:
