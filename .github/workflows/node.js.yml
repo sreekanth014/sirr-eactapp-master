@@ -33,12 +33,10 @@ jobs:
 
           for tag in "${tag_versions[@]}"; do        
 
-      - name: Build Docker image
-        run: docker build -t registry.digitalocean.com/react-iam/react-iam:latest .
+            docker build -t registry.digitalocean.com/react-iam/react-iam:latest .
 
-      - name: Push Docker image to DigitalOcean Container Registry
-        run: docker push registry.digitalocean.com/react-iam/react-iam:latest
-
+            docker push registry.digitalocean.com/react-iam/react-iam:latest
+          done  
       - name: Deploy to DigitalOcean
         uses: digitalocean/app_action/@main
         with:
