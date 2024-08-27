@@ -42,7 +42,7 @@ jobs:
           tag_versions=( "latest" "$current_tag" "v1.0.0" "v1.0.1" )  # Add or customize your versions
 
           for tag in "${tag_versions[@]}"; do
-            echo "Building and pushing image with tag: $tag"
+            
             docker build -t registry.digitalocean.com/react-iam/react-iam:$tag .
             docker push registry.digitalocean.com/react-iam/react-iam:$tag
           done 
