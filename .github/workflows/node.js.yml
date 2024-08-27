@@ -27,10 +27,14 @@ jobs:
         run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login -u doctl --password-stdin registry.digitalocean.com
       - name: Extract Git tag or commit hash
         run: |
-          current_tag=$(git describe --tags --abbrev=0)
-          if [[ -z "$current_tag" ]]; then
+          if git describe --tags --abbrev=0 > /dev/null 2>&1; then
+            current_tag=$(git describe --tags --abbrev=0)
+          else
             current_tag=$(git rev-parse --short HEAD)
           fi
+          echo "Tag or commit hash: $current_tag"
+          echo "current_tag=$current_tag" >> $GITHUB_ENV  # Save the variable for later use
+
         
       - name: Build and Push Docker Image with Multiple Tags
         run: |
