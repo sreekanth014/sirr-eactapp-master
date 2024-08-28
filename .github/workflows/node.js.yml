@@ -13,13 +13,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up SSH key
-        uses: actions/setup-ssh@v2
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.8.1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Connect to DigitalOcean droplet
-        run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} root@139.59.72.229
-      - name: after connection gettting message
-        run: echo "connected to dorplet"
+        run: ssh -o StrictHostKeyChecking=no root@139.59.72.229
+
+      - name: after connection getting message
+        run: echo "Connected to droplet"
