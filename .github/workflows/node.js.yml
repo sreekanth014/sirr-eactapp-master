@@ -1,5 +1,4 @@
-name: Connect to DigitalOcean Droplet and Build React-IAM Project
-
+name: Connect to DigitalOcean Droplet
 
 on:
   push:
@@ -10,30 +9,6 @@ jobs:
   connect:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      
-      - name: Build project
-        run: npm run build
-      - name: upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-artifacts
-          path: build
-      - name: download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: build-artifacts
-    
       - name: Install SSH client
         run: sudo apt-get install -y sshpass
 
@@ -41,10 +16,8 @@ jobs:
         env:
           SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
           DROPLET_IP: ${{ secrets.DROPLET_IP }}
-      
         run: |
           sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no root@$DROPLET_IP << EOF
-          sudo cp -r build-files /var/www/
-      
-          
+          ls -l
+          pwd
           EOF
