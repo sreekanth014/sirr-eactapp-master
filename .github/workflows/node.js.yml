@@ -3,23 +3,18 @@ name: Connect to DigitalOcean Droplet
 on:
   push:
     branches:
-      - ditialocean
+      - main
 
 jobs:
   connect:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Set up SSH agent
-        uses: webfactory/ssh-agent@v0
+      - name: Authenticate with DigitalOcean
+        uses: digitalocean/action-doctl@v2
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Connect to DigitalOcean droplet
-        run: ssh -o StrictHostKeyChecking=no root@139.59.72.229
-
-      - name: after connection getting message
-        run: echo "Connected to droplet"
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Connect to droplet
+        run: |
+          ssh -o "StrictHostKeyChecking=no" root@${{ secrets.DROPLET_IP }}
