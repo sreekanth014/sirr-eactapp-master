@@ -25,12 +25,12 @@ jobs:
       - name: Build project
         run: npm run build
       - name: upload artifact
-        uses: actions/upload_artifact@v3
+        uses: actions/upload-artifact@v3
         with:
           name: buld-files
           path: build
       - name: download artifact
-        uses: actions/download_artifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: buld-files
     
