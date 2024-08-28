@@ -18,6 +18,6 @@ jobs:
           DROPLET_IP: ${{ secrets.DROPLET_IP }}
         run: |
           sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no root@$DROPLET_IP << EOF
-          ls -l
+          cp -R
           pwd
           EOF
