@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload_artifact@v3
         with:
           name: buld-files
-          
+          path: build
           
       - name: Install SSH client
         run: sudo apt-get install -y sshpass
@@ -38,7 +38,7 @@ jobs:
           SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
           DROPLET_IP: ${{ secrets.DROPLET_IP }}
 
-      - name: upload artifact
+      - name: download artifact
         uses: actions/download_artifact@v3
         with:
           name: buld-files
