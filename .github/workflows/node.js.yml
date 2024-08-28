@@ -1,27 +1,17 @@
-name: Connect to DigitalOcean Droplett
 
+name: react-iam projectt
 on:
   push:
     branches:
       - ditialocean
-
+      
+   
 jobs:
-  connect:
+  build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Install SSH client
-        run: sudo apt-get install -y sshpass
 
-      - name: Connect to DigitalOcean Droplet
-        env:
-          SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
-          DROPLET_IP: ${{ secrets.DROPLET_IP }}
-        run: |
-          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no root@$DROPLET_IP << EOF
-          ls -l
-          pwd
-          EOF
-      - name: Checkout code
+    steps:
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Node.js
@@ -32,19 +22,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build ReactJS app
+     
+      - name: Build project
         run: npm run build
-
-      - name: Upload artifact
+        
+      - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: react-app-build
+          name: react-iam-build-artifacts
           path: build
-
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: react-app-build
-          path: build
-      - name: copy files into www folder
-        run: sudo cp -r /home/runner/work/sirr-eactapp-master/sirr-eactapp-master/build /var/www/
