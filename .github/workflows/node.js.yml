@@ -20,4 +20,4 @@ jobs:
 
       - name: Connect to DigitalOcean droplet
         run: |
-          ssh root@<droplet_public_ip>
+          ssh root@139.59.72.229
