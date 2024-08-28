@@ -1,49 +1,23 @@
-name: react-iam projectt
+name: Connect to DigitalOcean Droplet
+
 on:
   push:
     branches:
-      - master
-      
-   
+      - digitalocean
+
 jobs:
-  build:
+  connect:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Set up SSH key
+        uses: actions/setup-ssh@v2
         with:
-          node-version: '22'
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Install dependencies
-        run: npm install
-
-     
-      - name: Build project
-        run: npm run build
-        
-      - name: Archive artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: react-iam-build-artifacts
-          path: build
-
-     
-      - name: build the docker image
+      - name: Connect to DigitalOcean droplet
         run: |
-          docker rmi -f react-iam:latest | true
-          docker build -t react-iam:latest .
-
-      - name: build the docker image container
-        run: |
-          docker rm -f my-container | true
-          docker run -d -p 3000:3000 --name my-container react-iam:latest
-
-      - name: Deploy to DigitalOcean
-        uses: digitalocean/app_action/@main
-        with:
-          app_name: my_react_app
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          ssh root@<droplet_public_ip>
