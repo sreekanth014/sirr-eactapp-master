@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload_artifact@v3
         with:
           name: buld-files
-          path: build
+          
           
       - name: Install SSH client
         run: sudo apt-get install -y sshpass
@@ -42,11 +42,11 @@ jobs:
         uses: actions/download_artifact@v3
         with:
           name: buld-files
-          path: build
-        
+            
+      - name: connect and copy
         run: |
           sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no root@$DROPLET_IP << EOF
           sudo cp -r build /var/www/
       
           
-          EO
+          EOF
