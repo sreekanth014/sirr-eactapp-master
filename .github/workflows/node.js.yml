@@ -21,3 +21,5 @@ jobs:
       - name: Connect to DigitalOcean droplet
         run: |
           ssh root@139.59.72.229
+      - name: after connection gettting message
+        run: echo "connected to dorplet"
