@@ -1,17 +1,28 @@
+name: Connect to DigitalOcean Droplet
 
-name: react-iam projectt
 on:
   push:
     branches:
       - ditialocean
-      
-   
-jobs:
-  build:
-    runs-on: ubuntu-latest
 
+jobs:
+  connect:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Install SSH client
+        run: sudo apt-get install -y sshpass
+
+      - name: Connect to DigitalOcean Droplet
+        env:
+          SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
+          DROPLET_IP: ${{ secrets.DROPLET_IP }}
+        run: |
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no root@$DROPLET_IP << EOF
+          ls -l
+          pwd
+          EOF
+
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
@@ -22,12 +33,24 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-     
-      - name: Build project
+      - name: Build ReactJS app
         run: npm run build
-        
-      - name: Archive artifacts
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: react-iam-build-artifacts
+          name: react-app-build
           path: build
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: react-app-build
+          path: ./build
+
+      - name: Transfer build to Droplet
+        env:
+          SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
+          DROPLET_IP: ${{ secrets.DROPLET_IP }}
+        run: |
+          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r ./build root@$DROPLET_IP:/var/www/react-app
