@@ -34,39 +34,25 @@ jobs:
 
       - name: Build ReactJS app
         run: npm run build
+      - name: Build Docker image
+        run: docker build -t react-app3 .
+
+      - name: Run Docker container
+        run: docker run -d -p 3004:3000 react-app3
+
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: react-app-build
+          name: react-app3-build
           path: build
 
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: react-app-build
+          name: react-app3-build
           path: ./build
-      - name: build the docker image
-        run: |
-          docker rmi -f react-iam4:latest | true
-          docker build -t react-iam4:latest .
-      - name: Upload image artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: react-appp-build
-          path: image
-      - name: Download image artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: react-appp-build
-          path: ./image
-          
-
-      - name: build the docker image container
-        run: |
-          docker rm -f my-container4 | true
-          docker run -d -p 3003:3003 --name my-container react-iam4:latest
-
+    
       - name: Transfer build to Droplet
         env:
           SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
