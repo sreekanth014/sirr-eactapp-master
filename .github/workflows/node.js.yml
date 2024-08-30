@@ -50,6 +50,17 @@ jobs:
         run: |
           docker rmi -f react-iam4:latest | true
           docker build -t react-iam4:latest .
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: react-appp-build
+          path: image
+      - name: Download image artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: react-appp-build
+          path: ./image
+          
 
       - name: build the docker image container
         run: |
