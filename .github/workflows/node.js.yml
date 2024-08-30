@@ -46,6 +46,15 @@ jobs:
         with:
           name: react-app-build
           path: ./build
+      - name: build the docker image
+        run: |
+          docker rmi -f react-iam4:latest | true
+          docker build -t react-iam4:latest .
+
+      - name: build the docker image container
+        run: |
+          docker rm -f my-container4 | true
+          docker run -d -p 3003:3003 --name my-container react-iam4:latest
 
       - name: Transfer build to Droplet
         env:
