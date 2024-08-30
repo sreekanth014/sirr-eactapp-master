@@ -20,10 +20,10 @@ jobs:
       run: echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | docker login -u doctl --password-stdin registry.digitalocean.com
 
     - name: Build Docker image
-      run: docker build -t registry.digitalocean.com/react-iam/react-iam:latest .
+      run: docker build -t registry.digitalocean.com/react-iam/react-iam3:latest .
 
     - name: Push Docker image to DigitalOcean Container Registry
-      run: docker push registry.digitalocean.com/<your-registry-name>/<your-image-name>:latest
+      run: docker push registry.digitalocean.com/react-iam/react-iam3:latest
 
   deploy:
     needs: build
@@ -36,9 +36,9 @@ jobs:
     - name: Connect to Droplet and Run Container
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@<your-droplet-ip> << EOF
-          docker pull registry.digitalocean.com/<your-registry-name>/<your-image-name>:latest
+          docker pull registry.digitalocean.com/react-iam/react-iam3:latest
           
-          docker run -d -p 3000:3000 --name my-container registry.digitalocean.com/<your-registry-name>/<your-image-name>:latest
+          docker run -d -p 3005:3000 --name my-container2 registry.digitalocean.com/react-iam/react-iam3:latest
         EOF
       env:
         SSH_PRIVATE_KEY: ${{ secrets.DROPLET_SSH_KEY }}
