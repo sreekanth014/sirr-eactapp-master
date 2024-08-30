@@ -21,7 +21,6 @@ jobs:
           ls -l
           pwd
           EOF
-
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -39,18 +38,18 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: sree
-          path: sree
+          name: react-app-build
+          path: build
 
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: sree
-          path: sree
+          name: react-app-build
+          path: ./build
 
       - name: Transfer build to Droplet
         env:
           SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
           DROPLET_IP: ${{ secrets.DROPLET_IP }}
         run: |
-          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r sree root@$DROPLET_IP:/var/www
+          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r ./build root@$DROPLET_IP:/var/www/react-app
