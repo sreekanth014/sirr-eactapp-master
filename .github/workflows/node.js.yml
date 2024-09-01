@@ -42,16 +42,18 @@ jobs:
           # Pull the Docker image
           docker pull registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
 
-          # Stop and remove any existing container
-          docker stop my-container || true
-          docker rm my-container || true
+          # Stop and remove the existing container if it exists
+          if [ $(docker ps -q -f name=my-container) ]; then
+            docker stop my-container
+            docker rm my-container
+          fi
 
           # Run the new container and expose it on port 80
-          docker run -d --name my-container -p 3005:3000 registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
+          docker run -d --name my-container -p 80:3000 registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
 
       - name: Verify deployment
         run: |
-          if curl -s --head http://your_server_ip/ | grep "200 OK" > /dev/null; then
+          if curl -s --head http://139.59.72.229/ | grep "200 OK" > /dev/null; then
             echo "Deployment successful!"
           else
             echo "Deployment failed."
