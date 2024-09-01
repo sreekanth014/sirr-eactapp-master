@@ -1,5 +1,5 @@
+name: react-iam project
 
-name: react-iam projectt
 on:
   push:
     branches:
@@ -24,18 +24,21 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Set current tag
+        id: tag_step
+        run: echo "current_tag=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
       - name: Log in to DigitalOcean Container Registry
         run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login -u doctl --password-stdin registry.digitalocean.com
      
-        
-                      
       - name: Build docker image   
-        run: docker build -t registry.digitalocean.com/react-iam/react-iam:$current_tag .
-      - name: push docker image to digital ocean container registry       
-        run: docker push registry.digitalocean.com/react-iam/react-iam:$current_tag
-          
+        run: docker build -t registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }} .
+
+      - name: Push docker image to DigitalOcean Container Registry       
+        run: docker push registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
+
       - name: Deploy to DigitalOcean
-        uses: digitalocean/app_action/@main
+        uses: digitalocean/app_action@main
         with:
           app_name: my_react_app
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}   
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
