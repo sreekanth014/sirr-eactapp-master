@@ -36,6 +36,8 @@ jobs:
 
       - name: Push docker image to DigitalOcean Container Registry       
         run: docker push registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
+      - name: Pull docker image from DigitalOcean Container Registry
+        run: docker pull registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
 
       - name: Deploy to DigitalOcean
         uses: digitalocean/app_action@main
