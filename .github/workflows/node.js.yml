@@ -1,48 +1,51 @@
 name: react-iam project
-on:
-  push:
-    branches:
-      - production
+	on:
+	  push:
+	    branches:
+	      - production
+	
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+	jobs:
+	  build:
+	    runs-on: ubuntu-latest
+	
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+	    steps:
+	      - name: Checkout repository
+	        uses: actions/checkout@v3
+	
+	      - name: Set up Node.js
+	        uses: actions/setup-node@v3
+	        with:
+	          node-version: '22'
+	
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22'
+	      - name: Install dependencies
+	        run: npm install
+	
 
-      - name: Install dependencies
-        run: npm install
+	      - name: Build project
+	        run: npm run build
+	
 
-      - name: Build project
-        run: npm run build
+	      - name: Log in to DigitalOcean Container Registry
+	        run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login -u doctl --password-stdin registry.digitalocean.com
+	
 
-      - name: Log in to DigitalOcean Container Registry
-        run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login -u doctl --password-stdin registry.digitalocean.com
-      - name: Extract Git tag or commit hash
-        run: |
-          if git describe --tags --abbrev=0 > /dev/null 2>&1; then
-            current_tag=$(git describe --tags --abbrev=0)
-          else
-            current_tag=$(git rev-parse --short HEAD)
-          fi
-          echo "Tag or commit hash: $current_tag"
-          echo "current_tag=$current_tag" >> $GITHUB_ENV  # Save the variable for later use
-        
-                      
-      - name: Build docker image   
-        run: docker build -t registry.digitalocean.com/react-iam/react-iam:$current_tag .
-      - name: push docker image to digital ocean container registry       
-        run: docker push registry.digitalocean.com/react-iam/react-iam:$current_tag
-          
-      - name: Deploy to DigitalOcean
-        uses: digitalocean/app_action/@main
-        with:
-          app_name: my_react_app
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}     
+	      - name: Build Docker image
+	        run: docker build -t registry.digitalocean.com/react-iam/react-iam:latest .
+	
+
+	      - name: Push Docker image to DigitalOcean Container Registry
+	        run: docker push registry.digitalocean.com/react-iam/react-iam:latest
+	
+
+	      - name: Deploy to DigitalOcean
+	        uses: digitalocean/app_action/@main
+	        with:
+	          app_name: my_react_app
+	          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+	
+
+	      - name: Clean up Docker images
+	        run: docker rmi -f registry.digitalocean.com/react-iam/react-iam:latest
