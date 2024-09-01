@@ -1,4 +1,4 @@
-name: Connect to DigitalOcean Droplett
+name: Connect to DigitalOcean Droplet
 
 on:
   push:
@@ -21,6 +21,7 @@ jobs:
           ls -l
           pwd
           EOF
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -34,28 +35,23 @@ jobs:
 
       - name: Build ReactJS app
         run: npm run build
+
       - name: Build Docker image
         run: docker build -t react-app3 .
 
-      - name: Run Docker container
-        run: docker run -d -p 3004:3000 react-app3
-
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
+      - name: Push image to DigitalOcean Container Registry
+        uses: digitalocean/container-registry-action@v1
         with:
-          name: react-app3-build
-          path: build
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          registry: react-iam
+          image: react-app3
 
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: react-app3-build
-          path: ./build
-    
       - name: Transfer build to Droplet
         env:
           SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
           DROPLET_IP: ${{ secrets.DROPLET_IP }}
         run: |
-          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r ./build root@$DROPLET_IP:/var/www/react-app
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no root@$DROPLET_IP << EOF
+          docker pull react-iam/react-app3
+          docker run -d -p 3004:3000 react-app3
+          EOF
