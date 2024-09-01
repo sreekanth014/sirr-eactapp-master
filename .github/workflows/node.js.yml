@@ -3,7 +3,7 @@ name: Connect to DigitalOcean Droplet
 on:
   push:
     branches:
-      - ditialocean
+      - digitalocean
 
 jobs:
   connect:
@@ -40,7 +40,7 @@ jobs:
         run: docker build -t react-app3 .
 
       - name: Push image to DigitalOcean Container Registry
-        uses: digitalocean/container-registry-action@v1
+        uses: digitalocean/actions-do-container-registry@v1
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           registry: react-iam
