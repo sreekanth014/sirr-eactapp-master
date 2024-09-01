@@ -1,15 +1,28 @@
-name: react-iam project
+name: Connect to DigitalOcean Droplet
+
 on:
   push:
     branches:
-      - production
+      - ditialocean
 
 jobs:
-  build:
+  connect:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Install SSH client
+        run: sudo apt-get install -y sshpass
+
+      - name: Connect to DigitalOcean Droplet
+        env:
+          SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
+          DROPLET_IP: ${{ secrets.DROPLET_IP }}
+        run: |
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no root@$DROPLET_IP << EOF
+          ls -l
+          pwd
+          EOF
+
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
@@ -20,29 +33,25 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build project
+      - name: Build ReactJS app
         run: npm run build
 
-      - name: Log in to DigitalOcean Container Registry
-        run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login -u doctl --password-stdin registry.digitalocean.com
-      - name: Extract Git tag or commit hash
-        run: |
-          if git describe --tags --abbrev=0 > /dev/null 2>&1; then
-            current_tag=$(git describe --tags --abbrev=0)
-          else
-            current_tag=$(git rev-parse --short HEAD)
-          fi
-          echo "Tag or commit hash: $current_tag"
-          echo "current_tag=$current_tag" >> $GITHUB_ENV  # Save the variable for later use
-        
-                      
-      - name: Build docker image   
-        run: docker build -t registry.digitalocean.com/react-iam/react-iam:$current_tag .
-      - name: push docker image to digital ocean container registry       
-        run: docker push registry.digitalocean.com/react-iam/react-iam:$current_tag
-          
-      - name: Deploy to DigitalOcean
-        uses: digitalocean/app_action/@main
+      - name: Build Docker image
+        run: docker build -t react-app3 .
+
+      - name: Push image to DigitalOcean Container Registry
+        uses: digitalocean/container-registry-action@v1
         with:
-          app_name: my_react_app
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}     
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          registry: react-iam
+          image: react-app3
+
+      - name: Transfer build to Droplet
+        env:
+          SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
+          DROPLET_IP: ${{ secrets.DROPLET_IP }}
+        run: |
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no root@$DROPLET_IP << EOF
+          docker pull your-react-iam/react-app3
+          docker run -d -p 3004:3000 react-app3
+          EOF
