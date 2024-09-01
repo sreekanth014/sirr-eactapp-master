@@ -31,16 +31,29 @@ jobs:
       - name: Log in to DigitalOcean Container Registry
         run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login -u doctl --password-stdin registry.digitalocean.com
      
-      - name: Build docker image   
+      - name: Build Docker image   
         run: docker build -t registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }} .
 
-      - name: Push docker image to DigitalOcean Container Registry       
+      - name: Push Docker image to DigitalOcean Container Registry       
         run: docker push registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
-      - name: Pull docker image from DigitalOcean Container Registry
-        run: docker pull registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
 
-      - name: Deploy to DigitalOcean
-        uses: digitalocean/app_action@main
-        with:
-          app_name: my_react_app
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Deploy Docker container on server
+        run: |
+          # Pull the Docker image
+          docker pull registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
+
+          # Stop and remove any existing container
+          docker stop my-container || true
+          docker rm my-container || true
+
+          # Run the new container and expose it on port 80
+          docker run -d --name my-container -p 3005:3000 registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
+
+      - name: Verify deployment
+        run: |
+          if curl -s --head http://your_server_ip/ | grep "200 OK" > /dev/null; then
+            echo "Deployment successful!"
+          else
+            echo "Deployment failed."
+            exit 1
+          fi
