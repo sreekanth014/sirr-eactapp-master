@@ -1,19 +1,19 @@
-name: react-iam projectt
 
+name: react-iam projectt
 on:
   push:
     branches:
       - testing
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js (v22)
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22'
@@ -24,23 +24,18 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Log in to DigitalOcean Container Registry (Improved security)
-        run: |
-          echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login --username=DO_BOT --password-stdin registry.digitalocean.com
-          #  ^-- Use a dedicated service account for increased security
-
-      - name: Build Docker image (Improved readability)
-        run: docker build -t registry.digitalocean.com/react-iam/react-iam:latest .
-
-      - name: Push Docker image to DigitalOcean Container Registry
-        run: docker push registry.digitalocean.com/react-iam/react-iam:latest
-
-      - name: Deploy to DigitalOcean (Improved error handling)
+      - name: Log in to DigitalOcean Container Registry
+        run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login -u doctl --password-stdin registry.digitalocean.com
+     
+        
+                      
+      - name: Build docker image   
+        run: docker build -t registry.digitalocean.com/react-iam/react-iam:$current_tag .
+      - name: push docker image to digital ocean container registry       
+        run: docker push registry.digitalocean.com/react-iam/react-iam:$current_tag
+          
+      - name: Deploy to DigitalOcean
         uses: digitalocean/app_action/@main
         with:
           app_name: my_react_app
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-        # Consider adding `env: { FAIL_ON_ERRORS: false }` to the step if failures are expected and you want to continue deployment
-
-      - name: Clean up Docker images (Optional)
-        run: docker rmi -f registry.digitalocean.com/react-iam/react-iam:latest
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}   
