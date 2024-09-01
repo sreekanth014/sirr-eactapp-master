@@ -53,7 +53,7 @@ jobs:
 
       - name: Verify deployment
         run: |
-          if curl -s --head http://139.59.72.229/ | grep "200 OK" > /dev/null; then
+          if curl -s --head http://lakshmipathi.dharmateja.xyz/ | grep "200 OK" > /dev/null; then
             echo "Deployment successful!"
           else
             echo "Deployment failed."
