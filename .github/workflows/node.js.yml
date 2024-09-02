@@ -1,50 +1,61 @@
-name: react-iam project
+name: Connect to DigitalOcean Droplet
 
 on:
   push:
     branches:
       - production
-	
+
 jobs:
-  build:
+  connect:
     runs-on: ubuntu-latest
-	
     steps:
-      - name: Checkout repository
+      - name: Install SSH client
+        run: sudo apt-get install -y sshpass
+
+      - name: Connect to DigitalOcean Droplet
+        env:
+          SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
+          DROPLET_IP: ${{ secrets.DROPLET_IP }}
+        run: |
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no root@$DROPLET_IP << EOF
+          ls -l
+          pwd
+          EOF
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22'
-	
 
       - name: Install dependencies
         run: npm install
-	
 
-      - name: Build project
+      - name: Build ReactJS app
         run: npm run build
-	
-
-      - name: Log in to DigitalOcean Container Registry
-        run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login -u doctl --password-stdin registry.digitalocean.com
-	
-
       - name: Build Docker image
-        run: docker build -t registry.digitalocean.com/react-iam/react-iam:latest .
-	
+        run: docker build -t production-app .
 
-      - name: Push Docker image to DigitalOcean Container Registry
-        run: docker push registry.digitalocean.com/react-iam/react-iam:latest
-	
+      - name: Run Docker container
+        run: docker run -d -p 3004:3000 production-app
 
-      - name: Deploy to DigitalOcean
-        uses: digitalocean/app_action/@main
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
         with:
-          app_name: my_react_app
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-	
+          name: production-app
+          path: build
 
-      - name: Clean up Docker images
-        run: docker rmi -f registry.digitalocean.com/react-iam/react-iam:latest
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: production-app
+          path: ./build
+    
+      - name: Transfer build to Droplet
+        env:
+          SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
+          DROPLET_IP: ${{ secrets.DROPLET_IP }}
+        run: |
+          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r ./build root@$DROPLET_IP:/var/www/production-app
