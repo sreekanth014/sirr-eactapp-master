@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout repository
@@ -49,7 +49,7 @@ jobs:
           fi
 
           # Run the new container and expose it on port 80
-          docker run -d --name my-container -p 80:3000 registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
+          docker run -d --name my-container -p 3005:3000 registry.digitalocean.com/react-iam/react-iam:${{ env.current_tag }}
 
       - name: Verify deployment
         run: |
