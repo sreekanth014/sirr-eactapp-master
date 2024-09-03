@@ -46,7 +46,7 @@ export default class Form extends Component {
                                 <div className="mb-3">
 
                                     <h1>Todo MasterSree Branch1</h1>
-                                    <h1>Todo Sreekanth Devops Engineer @ tirupati</h1>
+                                    <h1>digitalocean Sreekanth Devops Engineer @ tirupati</h1>
 
                                     <input type="text" className="form-control" id="todo" placeholder='Try typing: Do Exercise' onChange={this.changeTodoInput} value={this.state.inputData} />
                                 </div>
