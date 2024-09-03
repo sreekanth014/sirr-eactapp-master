@@ -34,13 +34,7 @@ jobs:
 
       - name: Build ReactJS app
         run: npm run build
-      - name: Build Docker image
-        run: docker build -t production-app .
-
-      - name: Run Docker container
-        run: docker run -d -p 3004:3000 production-app
-
-
+      
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
