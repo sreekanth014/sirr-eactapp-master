@@ -35,22 +35,22 @@ jobs:
       - name: Build ReactJS app
         run: npm run build
       - name: Build Docker image
-        run: docker build -t react-app3 .
+        run: docker build -t react-app .
 
       - name: Run Docker container
-        run: docker run -d -p 3004:3000 react-app3
+        run: docker run -d -p 3004:3000 react-app
 
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: react-app3-build
+          name: react-app-build
           path: build
 
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: react-app3-build
+          name: react-app-build
           path: ./build
     
       - name: Transfer build to Droplet
@@ -58,4 +58,4 @@ jobs:
           SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
           DROPLET_IP: ${{ secrets.DROPLET_IP }}
         run: |
-          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r ./build root@$DROPLET_IP:/var/www/react-app
+          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r ./build root@$DROPLET_IP:/var/www/react-app/build
