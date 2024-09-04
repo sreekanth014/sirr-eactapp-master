@@ -1,4 +1,4 @@
-name: Connect to DigitalOcean Droplett
+name: Connect to DigitalOcean Droplet
 
 on:
   push:
