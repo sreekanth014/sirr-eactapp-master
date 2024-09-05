@@ -1,28 +1,4 @@
 # Build stage
-FROM node:18-alpine as builder
+FROM nginx:alpine
+COPY /home/enfec/actions-runner/_work/sirr-eactapp-master/sirr-eactapp-master/build /usr/share/nginx/html
 
-WORKDIR /app
-
-COPY package*.json ./
-
-RUN npm install --production
-
-COPY . .
-
-# Run the build command
-RUN npm run build
-
-# Debug to check the output folder (optional)
-# RUN ls -l /app
-
-# Production stage
-FROM node:18-alpine
-
-WORKDIR /app
-
-# Update the folder if it's 'build' instead of 'dist'
-COPY --from=builder /app/build ./
-
-EXPOSE 3000
-
-CMD ["node", "server.js"]
