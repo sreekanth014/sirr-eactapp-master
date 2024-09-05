@@ -1,33 +1,38 @@
-name: react-iam projectt
 on:
   push:
     branches:
       - master
-      
-   
+
 jobs:
   build:
     runs-on: self-hosted
 
     steps:
-    
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      
-     
-      - name: build the docker image
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # Use a lighter version like 20-alpine for consistency
+
+      - name: Build project
         run: |
-          docker rmi -f react-iam:latest | true
+          npm install --production
+          npm run build
+
+      - name: Build the Docker image
+        run: |
+          docker rmi -f react-iam:latest || true
           docker build -t react-iam:latest .
 
-      - name: build the docker image container
+      - name: Run the Docker container
         run: |
-          docker rm -f my-container | true
-          docker run -d -p 30000:80 --name my-container react-iam:latest
+          docker rm -f my-container || true
+          docker run -d -p 3000:80 --name my-container react-iam:latest
 
       - name: Deploy to DigitalOcean
-        uses: digitalocean/app_action/@main
+        uses: digitalocean/action-doctl@v2
         with:
-          app_name: my_react_app
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          args: apps update ${{ secrets.APP_ID }}
