@@ -1,8 +1,15 @@
-FROM node:latest
+FROM alpine/git as repo
+
+
 WORKDIR /app
-COPY package.json ./
+RUN git clone https://github.com/sreekanth014/sirr-eactapp-master.git
+
+FROM node:latest as build
+WORKDIR /app
+COPY --from=repo /app/sirr-eactapp-master  /app 
 RUN npm install
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm","start"]
+RUN npm build
+
+FROM nginx:alpine
+WORKDIR /usr/share/nginx/html 
+COPY --from=build /app/build .
