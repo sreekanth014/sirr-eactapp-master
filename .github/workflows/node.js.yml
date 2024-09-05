@@ -30,6 +30,9 @@ jobs:
         run: |
           docker rm -f my-container || true
           docker run -d -p 3000:80 --name my-container react-iam:latest
+      - name: Clean up dangling Docker images
+        run: |
+          docker image prune -f
 
       - name: Deploy to DigitalOcean
         uses: digitalocean/action-doctl@v2
