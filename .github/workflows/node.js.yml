@@ -34,7 +34,7 @@ jobs:
       - name: Clean up dangling Docker images
         run: |
           docker image prune -f
-          
+           docker rmi -f node:20-alpine || true
 
       - name: Deploy to DigitalOcean
         uses: digitalocean/action-doctl@v2
