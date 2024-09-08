@@ -24,7 +24,15 @@ pipeline {
                 sh 'npm run build'
             }
         }
+        stage('Image') {
+            steps {
+                // Build the React application
+                sh 'docker build -t react-app .'
+            }
+        }
+    
     }
+    
 
     post {
         success {
