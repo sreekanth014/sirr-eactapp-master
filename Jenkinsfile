@@ -1,5 +1,8 @@
 pipeline {
-    agent any
+    agent {
+
+        lable 'react'
+    }
 
     tools {
         // Use the NodeJS tool you configured in Jenkins
