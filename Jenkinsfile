@@ -1,5 +1,7 @@
 pipeline {
-    agent lable: 'react'
+    agent{
+        lable: 'react'
+    }
     
 
     tools {
