@@ -1,6 +1,6 @@
-pipeline {
+pipeline{
     agent{
-        lable: 'slave'
+        label: 'slave'
     }
     
 
