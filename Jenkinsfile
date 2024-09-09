@@ -1,6 +1,7 @@
-pipeline{
-    agent  label: 'slave'
-    
+pipeline {
+    agent {  
+        label 'slave'
+    }
     
 
     tools {
