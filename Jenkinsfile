@@ -1,7 +1,6 @@
 pipeline {
-    agent{
-        lable: "slave"
-    }
+    agent lable: 'slave'
+    
     
 
     tools {
